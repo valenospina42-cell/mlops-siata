@@ -16,6 +16,10 @@ de mala calidad del aire con 1 hora de anticipación y tomar medidas preventivas
 - **Período:** Agosto 2018 - Agosto 2019
 - **Estaciones:** 21 estaciones en el Valle de Aburrá
 - **Registros:** ~184,000 mediciones horarias de PM2.5
+- **Descarga:** [Datos SIATA PM2.5](https://www.siata.gov.co)
+
+> ⚠️ Los datos crudos no están incluidos en el repositorio por su tamaño.
+> Descarga el archivo JSON y colócalo en `data/raw/Datos_SIATA_Aire_pm25.json` antes de ejecutar el pipeline.
 
 ## Resultados del modelo
 
@@ -26,12 +30,61 @@ de mala calidad del aire con 1 hora de anticipación y tomar medidas preventivas
 | Random Forest optimizado | 5.49 | 8.00 | 0.608 |
 | **XGBoost** | **5.29** | **7.72** | **0.635** |
 
+## Inicio rápido
+
+Sigue estos pasos en orden para reproducir el proyecto completo:
+
+### 1. Clonar e instalar
+
+```bash
+git clone https://github.com/valenospina42-cell/mlops-siata.git
+cd mlops-siata
+uv sync
+```
+
+### 2. Agregar los datos
+
+Coloca el archivo `Datos_SIATA_Aire_pm25.json` en la carpeta `data/raw/`.
+
+### 3. Ejecutar el pipeline de entrenamiento
+
+```bash
+# Terminal 1: arrancar MLflow
+uv run mlflow ui
+
+# Terminal 2: ejecutar el pipeline (entrena el modelo y lo registra en MLflow)
+uv run python -m src.models.train
+```
+
+Esto genera el modelo entrenado y lo registra en MLflow en `mlartifacts/`.
+
+### 4. Levantar la API
+
+```bash
+uv run uvicorn src.api.main:app --port 8000
+```
+
+La API estará disponible en `http://localhost:8000/docs`
+
+### 5. Ejecutar con Docker
+
+```bash
+docker build -t pm25-siata-api .
+docker run -p 8000:8000 pm25-siata-api
+```
+
+### 6. Ejecutar tests
+
+```bash
+uv run pytest tests/ -v
+```
+
 ## Estructura del proyecto
 
 ```
 mlops-siata/
 ├── data/
-│   ├── raw/                  # Datos originales del SIATA
+│   ├── raw/                  # Datos originales del SIATA (no incluidos)
 │   └── processed/            # Datos procesados con features
 ├── src/
 │   ├── data/load_data.py     # Carga, limpieza y features
@@ -44,51 +97,6 @@ mlops-siata/
 ├── tests/                    # Unit tests
 ├── Dockerfile
 └── README.md
-```
-
-## Instalación y uso
-
-### Requisitos
-- Python 3.13+
-- uv
-
-### Setup
-
-```bash
-# Clonar el repositorio
-git clone https://github.com/valenospina42-cell/mlops-siata.git
-cd mlops-siata
-
-# Instalar dependencias
-uv sync
-
-# Ejecutar tests
-uv run pytest tests/ -v
-```
-
-### Ejecutar el pipeline de entrenamiento
-
-```bash
-# Primero arranca MLflow
-uv run mlflow ui
-
-# En otra terminal, ejecuta el pipeline
-uv run python -m src.models.train
-```
-
-### Ejecutar la API
-
-```bash
-uv run uvicorn src.api.main:app --port 8000
-```
-
-La API estará disponible en `http://localhost:8000/docs`
-
-### Ejecutar con Docker
-
-```bash
-docker build -t pm25-siata-api .
-docker run -p 8000:8000 pm25-siata-api
 ```
 
 ## Tecnologías usadas
