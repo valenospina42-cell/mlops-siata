@@ -1,4 +1,5 @@
-import mlflow.sklearn
+import pickle
+
 import pandas as pd
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -10,8 +11,10 @@ app = FastAPI(
 )
 
 # Cargar modelo al iniciar la API
-import pickle
-modelo = pickle.load(open("mlartifacts/1/models/m-0ade34a865da49ab8184eb2f915cc689/artifacts/model.pkl", "rb"))
+MODEL_PATH = (
+    "mlartifacts/1/models/m-0ade34a865da49ab8184eb2f915cc689/artifacts/model.pkl"
+)
+modelo = pickle.load(open(MODEL_PATH, "rb"))
 
 
 class DatosEntrada(BaseModel):
@@ -36,7 +39,7 @@ class Prediccion(BaseModel):
 
 def categorizar_pm25(valor: float) -> tuple[str, str]:
     if valor <= 12:
-        return "Bueno", " Calidad del aire buena"
+        return "Bueno", "✅ Calidad del aire buena"
     elif valor <= 25:
         return "Moderado", "🟡 Calidad del aire moderada"
     elif valor <= 50:
@@ -47,7 +50,7 @@ def categorizar_pm25(valor: float) -> tuple[str, str]:
 
 @app.get("/")
 def root():
-    return {"mensaje": "API PM2.5 SIATA funcionando "}
+    return {"mensaje": "API PM2.5 SIATA funcionando ✅"}
 
 
 @app.get("/health")
