@@ -26,8 +26,6 @@ de mala calidad del aire con 1 hora de anticipación y tomar medidas preventivas
 | **Random Forest optimizado** | **5.49** | **8.00** | **0.608** |
 
 ## Estructura del proyecto
-
-```
 mlops-siata/
 ├── data/
 │   ├── raw/                  # Datos originales del SIATA
@@ -43,65 +41,7 @@ mlops-siata/
 ├── tests/                    # Unit tests
 ├── Dockerfile
 └── README.md
-```
 
-## Instalación y uso
 
-### Requisitos
-- Python 3.13+
-- uv
 
-### Setup
 
-```bash
-# Clonar el repositorio
-git clone https://github.com/valenospina42-cell/mlops-siata.git
-cd mlops-siata
-
-# Instalar dependencias
-uv sync
-
-# Ejecutar tests
-uv run pytest tests/ -v
-```
-
-### Ejecutar el pipeline de entrenamiento
-
-```bash
-# Primero arranca MLflow
-uv run mlflow ui
-
-# En otra terminal, ejecuta el pipeline
-uv run python -m src.models.train
-```
-
-### Ejecutar la API
-
-```bash
-uv run uvicorn src.api.main:app --port 8000
-```
-
-La API estará disponible en `http://localhost:8000/docs`
-
-### Ejecutar con Docker
-
-```bash
-docker build -t pm25-siata-api .
-docker run -p 8000:8000 pm25-siata-api
-```
-
-## Tecnologías usadas
-
-- **ML:** scikit-learn (Random Forest)
-- **Experiment Tracking:** MLflow
-- **Pipeline:** Prefect
-- **API:** FastAPI + Uvicorn
-- **Containerización:** Docker
-- **Testing:** pytest
-- **Linter:** ruff
-
-## Monitoreo (propuesta)
-
-- Registrar las predicciones vs valores reales en una base de datos
-- Dashboard en Grafana con métricas de drift del modelo
-- Alertas cuando el MAE supere un umbral definido
