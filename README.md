@@ -10,16 +10,40 @@ de la próxima hora en las estaciones de monitoreo del SIATA en el Valle de Abur
 **Problema de negocio:** Las autoridades ambientales pueden anticipar episodios
 de mala calidad del aire con 1 hora de anticipación y tomar medidas preventivas.
 
+## Alcance del proyecto
+
+|**COMPONENTE**| **Descripción**|
+|-|-|
+|MVP|Pipeline de entrenamiento + API de predicción local|
+|Funcionalidad completa|API dockerizada + CI/CD + monitoreo propuesto|
+
+
+
+## Timeline
+
+|FASE|TAREA|TIEMPO ESTIMADO|RESPONSABLE|
+|-|-|-|-|
+|1| Setup del entorno y EDA|2 horas|Valentina Ospina|
+|2|Preprocesamiento y features|1 hora|Valentina Ospina|
+|3|Experimentos con MLflow|2 horas|Valentina Ospina|
+|4|Pipeline con Prefect|1 hora|Valentina Ospina|
+|<br />5|API con FastAPI|1 hora|Valentina Ospina|
+|6|Docker|1 horas|Valentina Ospina|
+|7|Tests y documentación|1 horas|Valentina Ospina|
+|8|CI/CD con GitHub Actions |30 minutos|Valentina Ospina|
+
+
+
 ## Dataset
 
 * **Fuente:** SIATA (Sistema de Alerta Temprana de Medellín y el Valle de Aburrá)
 * **Período:** Agosto 2018 - Agosto 2019
 * **Estaciones:** 21 estaciones en el Valle de Aburrá
 * **Registros:** \~184,000 mediciones horarias de PM2.5
-* **Descarga:** [\[Datos SIATA PM2.5](https://drive.google.com/file/d/1crae2SE-R8-m2FtlmTXZCfEFkdy2cqaC/view?usp=drive\_link)](https://www.siata.gov.co)
+* **Descarga:** [\[Datos SIATA PM2.5](https://drive.google.com/file/d/1crae2SE-R8-m2FtlmTXZCfEFkdy2cqaC/view?usp=drive_link)](https://www.siata.gov.co)
 
 > ⚠️ Los datos crudos no están incluidos en el repositorio por su tamaño.
-> Descarga el archivo JSON y colócalo en `data/raw/Datos\_SIATA\_Aire\_pm25.json` antes de ejecutar el pipeline.
+> Descarga el archivo JSON y colócalo en `data/raw/Datos\\\_SIATA\\\_Aire\\\_pm25.json` antes de ejecutar el pipeline.
 
 ## Resultados del modelo
 
@@ -44,7 +68,7 @@ uv sync
 
 ### 2\. Agregar los datos
 
-Coloca el archivo `Datos\_SIATA\_Aire\_pm25.json` en la carpeta `data/raw/`.
+Coloca el archivo `Datos\\\_SIATA\\\_Aire\\\_pm25.json` en la carpeta `data/raw/`.
 
 ### 3\. Ejecutar el pipeline de entrenamiento
 
@@ -87,13 +111,13 @@ mlops-siata/
 │   ├── raw/                  # Datos originales del SIATA (no incluidos)
 │   └── processed/            # Datos procesados con features
 ├── src/
-│   ├── data/load\_data.py     # Carga, limpieza y features
+│   ├── data/load\\\_data.py     # Carga, limpieza y features
 │   ├── models/train.py       # Pipeline de entrenamiento (Prefect)
 │   └── api/main.py           # API de predicción (FastAPI)
 ├── notebooks/
-│   ├── 01\_eda.ipynb          # Análisis exploratorio
-│   ├── 02\_preprocessing.ipynb
-│   └── 03\_experiments.ipynb  # Experimentos con MLflow
+│   ├── 01\\\_eda.ipynb          # Análisis exploratorio
+│   ├── 02\\\_preprocessing.ipynb
+│   └── 03\\\_experiments.ipynb  # Experimentos con MLflow
 ├── tests/                    # Unit tests
 ├── Dockerfile
 └── README.md
