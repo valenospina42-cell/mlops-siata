@@ -62,3 +62,24 @@ def create_features(df: pd.DataFrame) -> pd.DataFrame:
     df_f["pm25_siguiente"] = df_f.groupby("estacion")["pm25"].shift(-1)
     df_f = df_f.dropna().reset_index(drop=True)
     return df_f
+def validate_data(df: pd.DataFrame) -> bool:
+    """Valida que el dataframe tenga la estructura esperada"""
+    columnas_requeridas = [
+        "estacion", "nombre", "latitud", "longitud", "fecha", "pm25", "calidad"
+    ]
+    
+    for col in columnas_requeridas:
+        if col not in df.columns:
+            raise ValueError(f"Columna requerida no encontrada: {col}")
+    
+    if df.empty:
+        raise ValueError("El dataframe está vacío")
+    
+    if df["pm25"].isna().all():
+        raise ValueError("Todos los valores de PM2.5 son nulos")
+    
+    if not pd.api.types.is_datetime64_any_dtype(df["fecha"]):
+        raise ValueError("La columna fecha no es de tipo datetime")
+    
+    print(f"✅ Validación exitosa: {len(df):,} registros, {len(df.columns)} columnas")
+    return True

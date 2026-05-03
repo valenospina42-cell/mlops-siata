@@ -7,7 +7,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 
-from src.data.load_data import clean_data, create_features, load_raw_data
+from src.data.load_data import validate_data
 
 FEATURES = [
     "hora", "dia_semana", "mes", "es_fin_semana",
@@ -17,25 +17,13 @@ FEATURES = [
 TARGET = "pm25_siguiente"
 
 
-@task(name="Cargar datos")
+@task(name="Cargar datos procesados")
 def task_cargar_datos(path: str) -> pd.DataFrame:
-    df = load_raw_data(path)
+    df = pd.read_csv(path)
+    df["fecha"] = pd.to_datetime(df["fecha"])
+    validate_data(df)
     print(f"  Datos cargados: {df.shape}")
     return df
-
-
-@task(name="Limpiar datos")
-def task_limpiar_datos(df: pd.DataFrame) -> pd.DataFrame:
-    df_clean = clean_data(df)
-    print(f"  Datos limpios: {df_clean.shape}")
-    return df_clean
-
-
-@task(name="Crear features")
-def task_crear_features(df: pd.DataFrame) -> pd.DataFrame:
-    df_features = create_features(df)
-    print(f"  Features creadas: {df_features.shape}")
-    return df_features
 
 
 @task(name="Entrenar modelo")
@@ -53,19 +41,19 @@ def task_entrenar_modelo(df: pd.DataFrame) -> str:
     with mlflow.start_run(run_name="pipeline-random-forest") as run:
         params = {
             "modelo": "RandomForestRegressor",
-            "n_estimators": 200,
-            "max_depth": 15,
+            "n_estimators": 100,
+            "max_depth": 10,
             "min_samples_split": 5,
             "random_state": 42,
         }
         mlflow.log_params(params)
 
         modelo = RandomForestRegressor(
-            n_estimators=200,
-            max_depth=15,
+            n_estimators=100,
+            max_depth=10,
             min_samples_split=5,
             random_state=42,
-            n_jobs=-1,
+            n_jobs=1,
         )
         modelo.fit(X_train, y_train)
         y_pred = modelo.predict(X_test)
@@ -82,12 +70,10 @@ def task_entrenar_modelo(df: pd.DataFrame) -> str:
 
 
 @flow(name="Pipeline PM25 SIATA")
-def pipeline_pm25(data_path: str = "data/raw/Datos_SIATA_Aire_pm25.json"):
+def pipeline_pm25(data_path: str = "data/processed/siata_features.csv"):
     print("🚀 Iniciando pipeline...")
-    df_raw = task_cargar_datos(data_path)
-    df_clean = task_limpiar_datos(df_raw)
-    df_features = task_crear_features(df_clean)
-    run_id = task_entrenar_modelo(df_features)
+    df = task_cargar_datos(data_path)
+    run_id = task_entrenar_modelo(df)
     print(f"✅ Pipeline completado! Run ID: {run_id}")
 
 
