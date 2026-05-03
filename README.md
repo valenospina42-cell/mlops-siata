@@ -12,7 +12,7 @@ de mala calidad del aire con 1 hora de anticipación y tomar medidas preventivas
 
 ## Alcance del proyecto
 
-|**COMPONENTE**| **Descripción**|
+|**COMPONENTE**|**Descripción**|
 |-|-|
 |MVP|Pipeline de entrenamiento + API de predicción local|
 |Funcionalidad completa|API dockerizada + CI/CD + monitoreo propuesto|
@@ -23,14 +23,14 @@ de mala calidad del aire con 1 hora de anticipación y tomar medidas preventivas
 
 |FASE|TAREA|TIEMPO ESTIMADO|RESPONSABLE|
 |-|-|-|-|
-|1| Setup del entorno y EDA|2 horas|Valentina Ospina|
+|1|Setup del entorno y EDA|2 horas|Valentina Ospina|
 |2|Preprocesamiento y features|1 hora|Valentina Ospina|
 |3|Experimentos con MLflow|2 horas|Valentina Ospina|
 |4|Pipeline con Prefect|1 hora|Valentina Ospina|
 |<br />5|API con FastAPI|1 hora|Valentina Ospina|
 |6|Docker|1 horas|Valentina Ospina|
 |7|Tests y documentación|1 horas|Valentina Ospina|
-|8|CI/CD con GitHub Actions |30 minutos|Valentina Ospina|
+|8|CI/CD con GitHub Actions|30 minutos|Valentina Ospina|
 
 
 
@@ -43,7 +43,7 @@ de mala calidad del aire con 1 hora de anticipación y tomar medidas preventivas
 * **Descarga:** [\[Datos SIATA PM2.5](https://drive.google.com/file/d/1crae2SE-R8-m2FtlmTXZCfEFkdy2cqaC/view?usp=drive_link)](https://www.siata.gov.co)
 
 > ⚠️ Los datos crudos no están incluidos en el repositorio por su tamaño.
-> Descarga el archivo JSON y colócalo en `data/raw/Datos\\\_SIATA\\\_Aire\\\_pm25.json` antes de ejecutar el pipeline.
+> Descarga el archivo JSON y colócalo en `data/raw/Datos\\\\\\\_SIATA\\\\\\\_Aire\\\\\\\_pm25.json` antes de ejecutar el pipeline.
 
 ## Resultados del modelo
 
@@ -68,27 +68,55 @@ uv sync
 
 ### 2\. Agregar los datos
 
-Coloca el archivo `Datos\\\_SIATA\\\_Aire\\\_pm25.json` en la carpeta `data/raw/`.
+Coloca el archivo `Datos\\\\\\\_SIATA\\\\\\\_Aire\\\\\\\_pm25.json` en la carpeta `data/raw/`.
 
-### 3\. Ejecutar el pipeline de entrenamiento
+### 3\. Preprocesar los datos
+
+Ejecuta el notebook `notebooks/02\_preprocessing.ipynb` completo para generar
+
+el archivo `data/processed/siata\_features.csv`.
+
+
+
+O ejecuta directamente desde la terminal:
+
+```python
+
+uv run python -c "
+
+import json, pandas as pd, numpy as np
+
+from src.data.load\_data import load\_raw\_data, clean\_data, create\_features
+
+df = load\_raw\_data('data/raw/Datos\_SIATA\_Aire\_pm25.json')
+
+df = clean\_data(df)
+
+df = create\_features(df)
+
+df.to\_csv('data/processed/siata\_features.csv', index=False)
+
+print(' Datos procesados guardados en data/processed/siata\_features.csv')
+
+"
+
+```
+
+### 4\. Ejecutar el pipeline de entrenamiento
 
 ```bash
-# Terminal 1: arrancar MLflow
+
+\# Terminal 1: arrancar MLflow
+
 uv run mlflow ui
 
-# Terminal 2: ejecutar el pipeline (entrena el modelo y lo registra en MLflow)
+
+
+\# Terminal 2: ejecutar el pipeline
+
 uv run python -m src.models.train
-```
 
-Esto genera el modelo entrenado y lo registra en MLflow en `mlartifacts/`.
-
-### 4\. Levantar la API
-
-```bash
-uv run uvicorn src.api.main:app --port 8000
-```
-
-La API estará disponible en `http://localhost:8000/docs`
+### ```
 
 ### 5\. Ejecutar con Docker
 
@@ -111,13 +139,13 @@ mlops-siata/
 │   ├── raw/                  # Datos originales del SIATA (no incluidos)
 │   └── processed/            # Datos procesados con features
 ├── src/
-│   ├── data/load\\\_data.py     # Carga, limpieza y features
+│   ├── data/load\\\\\\\_data.py     # Carga, limpieza y features
 │   ├── models/train.py       # Pipeline de entrenamiento (Prefect)
 │   └── api/main.py           # API de predicción (FastAPI)
 ├── notebooks/
-│   ├── 01\\\_eda.ipynb          # Análisis exploratorio
-│   ├── 02\\\_preprocessing.ipynb
-│   └── 03\\\_experiments.ipynb  # Experimentos con MLflow
+│   ├── 01\\\\\\\_eda.ipynb          # Análisis exploratorio
+│   ├── 02\\\\\\\_preprocessing.ipynb
+│   └── 03\\\\\\\_experiments.ipynb  # Experimentos con MLflow
 ├── tests/                    # Unit tests
 ├── Dockerfile
 └── README.md
