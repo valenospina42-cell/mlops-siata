@@ -78,4 +78,7 @@ def pipeline_pm25(data_path: str = "data/processed/siata_features.csv"):
 
 
 if __name__ == "__main__":
-    pipeline_pm25()
+    pipeline_pm25.serve(
+        name="pipeline-pm25-diario",
+        cron="0 6 * * *",  # Corre todos los días a las 6am
+    )
