@@ -36,14 +36,29 @@ de mala calidad del aire con 1 hora de anticipación y tomar medidas preventivas
 
 ## Dataset
 
-* **Fuente:** SIATA (Sistema de Alerta Temprana de Medellín y el Valle de Aburrá)
-* **Período:** Agosto 2018 - Agosto 2019
-* **Estaciones:** 21 estaciones en el Valle de Aburrá
-* **Registros:** \~184,000 mediciones horarias de PM2.5
-* **Descarga:** [\[Datos SIATA PM2.5](https://drive.google.com/file/d/1crae2SE-R8-m2FtlmTXZCfEFkdy2cqaC/view?usp=drive_link)](https://www.siata.gov.co)
+**## Dataset**
 
-> ⚠️ Los datos crudos no están incluidos en el repositorio por su tamaño.
-> Descarga el archivo JSON y colócalo en `data/raw/Datos\\\\\\\_SIATA\\\\\\\_Aire\\\\\\\_pm25.json` antes de ejecutar el pipeline.
+
+
+**- \*\*Fuente:\*\* SIATA (Sistema de Alerta Temprana de Medellín y el Valle de Aburrá)**
+
+**- \*\*Período:\*\* Agosto 2018 - Agosto 2019**
+
+**- \*\*Estaciones:\*\* 21 estaciones en el Valle de Aburrá**
+
+**- \*\*Registros:\*\* \~184,000 mediciones horarias de PM2.5**
+
+**- \*\*Descarga datos crudos:\*\* \[Datos\_SIATA\_Aire\_pm25.json](https://drive.google.com/file/d/1crae2SE-R8-m2FtlmTXZCfEFkdy2cqaC/view?usp=drive\_link)**
+
+**- \*\*Descarga datos procesados:\*\* \[siata\_features.csv](https://drive.google.com/file/d/15vLD3NMS2eGyd3pcbjE2qWEzox77g94y/view?usp=drive\_link)**
+
+
+
+**⚠️ Coloca los archivos así:**
+
+**- data/raw/Datos\_SIATA\_Aire\_pm25.json**
+
+**- data/processed/siata\_features.csv**
 
 ## Resultados del modelo
 
@@ -68,13 +83,13 @@ uv sync
 
 ### 2\. Agregar los datos
 
-Coloca el archivo `Datos\\\\\\\_SIATA\\\\\\\_Aire\\\\\\\_pm25.json` en la carpeta `data/raw/`.
+Coloca el archivo `Datos\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_SIATA\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_Aire\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_pm25.json` en la carpeta `data/raw/`.
 
 ### 3\. Preprocesar los datos
 
-Ejecuta el notebook `notebooks/02\_preprocessing.ipynb` completo para generar
+Ejecuta el notebook `notebooks/02\\\\\\\_preprocessing.ipynb` completo para generar
 
-el archivo `data/processed/siata\_features.csv`.
+el archivo `data/processed/siata\\\\\\\_features.csv`.
 
 
 
@@ -86,17 +101,17 @@ uv run python -c "
 
 import json, pandas as pd, numpy as np
 
-from src.data.load\_data import load\_raw\_data, clean\_data, create\_features
+from src.data.load\\\\\\\_data import load\\\\\\\_raw\\\\\\\_data, clean\\\\\\\_data, create\\\\\\\_features
 
-df = load\_raw\_data('data/raw/Datos\_SIATA\_Aire\_pm25.json')
+df = load\\\\\\\_raw\\\\\\\_data('data/raw/Datos\\\\\\\_SIATA\\\\\\\_Aire\\\\\\\_pm25.json')
 
-df = clean\_data(df)
+df = clean\\\\\\\_data(df)
 
-df = create\_features(df)
+df = create\\\\\\\_features(df)
 
-df.to\_csv('data/processed/siata\_features.csv', index=False)
+df.to\\\\\\\_csv('data/processed/siata\\\\\\\_features.csv', index=False)
 
-print(' Datos procesados guardados en data/processed/siata\_features.csv')
+print(' Datos procesados guardados en data/processed/siata\\\\\\\_features.csv')
 
 "
 
@@ -106,19 +121,19 @@ print(' Datos procesados guardados en data/processed/siata\_features.csv')
 
 ```bash
 
-\# Terminal 1: arrancar MLflow
+\\\\# Terminal 1: arrancar MLflow
 
 uv run mlflow ui
 
 
 
-\# Terminal 2: ejecutar el pipeline
+\\\\# Terminal 2: ejecutar el pipeline
 
 uv run python -m src.models.train
 
 ### ```
 
-### 5\. Ejecutar con Docker
+### 5\\\\. Ejecutar con Docker
 
 ```bash
 docker build -t pm25-siata-api .
@@ -139,13 +154,13 @@ mlops-siata/
 │   ├── raw/                  # Datos originales del SIATA (no incluidos)
 │   └── processed/            # Datos procesados con features
 ├── src/
-│   ├── data/load\\\\\\\_data.py     # Carga, limpieza y features
+│   ├── data/load\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_data.py     # Carga, limpieza y features
 │   ├── models/train.py       # Pipeline de entrenamiento (Prefect)
 │   └── api/main.py           # API de predicción (FastAPI)
 ├── notebooks/
-│   ├── 01\\\\\\\_eda.ipynb          # Análisis exploratorio
-│   ├── 02\\\\\\\_preprocessing.ipynb
-│   └── 03\\\\\\\_experiments.ipynb  # Experimentos con MLflow
+│   ├── 01\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_eda.ipynb          # Análisis exploratorio
+│   ├── 02\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_preprocessing.ipynb
+│   └── 03\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_experiments.ipynb  # Experimentos con MLflow
 ├── tests/                    # Unit tests
 ├── Dockerfile
 └── README.md
